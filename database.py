@@ -3,18 +3,12 @@ from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
 from urllib.parse import quote_plus
 
-
- 
-
-# encoded_username = quote_plus(MYSQL_USERNAME)
-encoded_password = quote_plus("Dani@2022")
- 
-
-USER = "root"
-PASSWORD = encoded_password
-HOST = "localhost"
+USER = "sql12750063"
+PASSWORD = "5L3gGkDjzR"
+HOST = "sql12.freesqldatabase.com"
 PORT = "3306"
-NAME = "smart_kids"
+NAME = "sql12750063"
+
 URL_DATABASE = f"mysql+pymysql://{USER}:{PASSWORD}@{HOST}:{PORT}/{NAME}"
 
 engine = create_engine( URL_DATABASE )
