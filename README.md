@@ -25,3 +25,11 @@ Or simply click:
 ## Thanks
 
 Thanks to [Harish](https://harishgarg.com) for the [inspiration to create a FastAPI quickstart for Render](https://twitter.com/harishkgarg/status/1435084018677010434) and for some sample code!
+
+# Install and Run
+
+1. Clone this repository
+2. Activate the environment using: `python -m venv env` and `source env/bin/activate` (for Mac/Linux) or `env\Scripts\activate` (for Windows)
+3. Install the requirements using pip: `pip install -r requirements.txt`
+4. Run the server using: `uvicorn main:app --reload`
+5. Open your browser and navigate to `http://localhost:8000/docs` to see the API documentation and try out the API.

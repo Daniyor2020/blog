@@ -1,14 +1,62 @@
-from typing import Optional
 
-from fastapi import FastAPI
+from fastapi import FastAPI, HTTPException, status
+import blog.models as models, schemas
+from blog.database import engine, SessionLocal
+from fastapi.middleware.cors import CORSMiddleware
 
-app = FastAPI()
+models.Base.metadata.create_all(bind=engine)
+
+app =FastAPI()
+
+
+origins = [
+  "http://localhost",
+  "http://localhost:3000",
+  
+]
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],  # Adjust this to specify allowed origins
+    allow_credentials=True,
+    allow_methods=["*"],  # Specify allowed methods
+    allow_headers=["*"],  # Specify allowed headers
+)
 
 
 @app.get("/")
 async def root():
-    return {"message": "Hello World"}
+    return {"message": "Hey there"}   
 
-@app.get("/items/{item_id}")
-def read_item(item_id: int, q: Optional[str] = None):
-    return {"item_id": item_id, "q": q}
+@app.post("/users", status_code=status.HTTP_201_CREATED)
+async def create_user(user: schemas.UserBase):
+    db = SessionLocal()
+    db_user = db.query(models.User).filter(models.User.username== user.username).first()
+    if db_user:
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=f"User already exists")
+    else:
+        new_user = models.User(**user.dict())
+        db.add(new_user)
+        db.commit()
+        db.refresh(new_user)
+        return new_user
+    
+@app.get("/linksByUserId/{user_id}", status_code=status.HTTP_200_OK, response_model=schemas.UserLinksBase)
+async def get_user(user_id: int):
+    db = SessionLocal()
+    db_user = db.query(models.User).filter(models.User.id == user_id).first()
+    if db_user:
+        return db_user
+    else:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=f"User with id {user_id} not found")
+    
+    
+@app.post("/links", status_code=status.HTTP_201_CREATED)
+async def create_link(link: schemas.LinksBase):
+    db = SessionLocal()
+    new_link = models.Links(**link.dict())
+    db.add(new_link)
+    db.commit()
+    db.refresh(new_link)
+    return new_link
+
