@@ -1,7 +1,9 @@
 
 from fastapi import FastAPI, HTTPException, status
-import blog.models as models, schemas
-from blog.database import engine, SessionLocal
+
+import schemas
+import models
+from database import engine, SessionLocal
 from fastapi.middleware.cors import CORSMiddleware
 
 models.Base.metadata.create_all(bind=engine)
