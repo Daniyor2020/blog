@@ -30,6 +30,12 @@ app.add_middleware(
 async def root():
     return {"message": "Hey there"}   
 
+@app.get("/users", status_code=status.HTTP_200_OK, response_model=list[schemas.ShowUser])
+async def get_users():
+    db = SessionLocal()
+    users = db.query(models.User).all()
+    return users
+
 @app.post("/users", status_code=status.HTTP_201_CREATED)
 async def create_user(user: schemas.UserBase):
     db = SessionLocal()
@@ -61,4 +67,14 @@ async def create_link(link: schemas.LinksBase):
     db.commit()
     db.refresh(new_link)
     return new_link
+
+@app.delete("/links/{link_id}", status_code=status.HTTP_204_NO_CONTENT)
+async def delete_link(link_id: int):
+    db = SessionLocal()
+    db_link = db.query(models.Links).filter(models.Links.id == link_id).first()
+    if db_link:
+        db.delete(db_link)
+        db.commit()
+    else:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=f"Link with id {link_id} not found")
 
