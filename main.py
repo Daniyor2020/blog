@@ -58,6 +58,14 @@ async def get_user(user_id: int):
     else:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=f"User with id {user_id} not found")
     
+@app.get('/vidoes/{username}', status_code=status.HTTP_200_OK, response_model=schemas.UserLinksBase)
+async def get_videos_by_username(username: str):
+    db = SessionLocal()
+    db_user = db.query(models.User).filter(models.User.username == username).first()
+    if db_user:
+        return db_user
+    else:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=f"User with username {username} not found")
     
 @app.post("/links", status_code=status.HTTP_201_CREATED)
 async def create_link(link: schemas.LinksBase):
